@@ -1,11 +1,13 @@
 package com.example.afridha.simplememoapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import com.example.afridha.simplememoapp.Model.Note;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -20,64 +22,57 @@ public class UpdateNoteEditor extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.update_note_editor);
+        setContentView(R.layout.note_editor);
 
-        etJudul = findViewById(R.id.etEditTitle);
-        etIsi = findViewById(R.id.etEditContent);
+        etJudul = findViewById(R.id.etTitle);
+        etIsi = findViewById(R.id.etContent);
 
         //Set currentDate
         mCurrentDate = dateFormat.format(c.getTime());
 
         //Get data from selected notes
-        id = getIntent().getIntExtra("id",0);
+        id = getIntent().getIntExtra("id", 0);
         title = getIntent().getStringExtra("title");
         content = getIntent().getStringExtra("content");
         dateCreated = getIntent().getStringExtra("created");
         dateModified = mCurrentDate;
+
+        //Set data to EditText
         etJudul.setText(title);
         etIsi.setText(content);
     }
+
     private void updateNote() {
+        //Get data from EditText
         String currentTitle = etJudul.getText().toString();
         String currentContent = etIsi.getText().toString();
-            //new object to add to database
-            DatabaseHelper db = new DatabaseHelper(getApplicationContext());
-            Note notes = new Note(currentTitle, currentContent,dateCreated, dateModified);
-            //Call method for updating note
-            db.editNote(notes, id);
-            db.close();
-            Toast.makeText(getApplicationContext(), "Changed", Toast.LENGTH_SHORT).show();
-            finish();
-    }
 
-    private void deleteNote() {
+        //Initialize the database
         DatabaseHelper db = new DatabaseHelper(getApplicationContext());
-        db.deleteNote(id);
+
+        //Saving the updated data to object notes
+        Note notes = new Note(currentTitle, currentContent, dateCreated, dateModified);
+
+        //Call method for updating note
+        db.editNote(notes, id);
         db.close();
-//        .remove(position);
-//        notifyItemRemoved(position);
-//        notifyItemRangeChanged(position, moviesList.size());
-//        Toast.makeText(mContext, "Item Deleted", Toast.LENGTH_SHORT).show();
 
-    }
-
-    private void showToast(String msg){
-        Toast.makeText(this, msg ,Toast.LENGTH_SHORT);
+        Intent intent = new Intent(UpdateNoteEditor.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_update_notes,menu);
+        getMenuInflater().inflate(R.menu.menu_add_notes, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.action_save) {
+        if (id == R.id.action_save) {
             updateNote();
-        } else if (id == R.id.action_delete) {
-            deleteNote();
         }
         return super.onOptionsItemSelected(item);
     }

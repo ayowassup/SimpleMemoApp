@@ -8,63 +8,69 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.afridha.simplememoapp.Model.Note;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class PlainNoteEditor extends AppCompatActivity {
-        EditText etJudul, etIsi;
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        String mCurrentDate;
+    EditText etJudul, etIsi;
+    Calendar c = Calendar.getInstance();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    String title, content, dateCreated, dateModified, mCurrentDate;
 
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.plain_note_editor);
-            etJudul = findViewById(R.id.etTitle);
-            etIsi = findViewById(R.id.etContent);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.note_editor);
 
-            //Set currentDate
-            mCurrentDate = dateFormat.format(c.getTime());
+        etJudul = findViewById(R.id.etTitle);
+        etIsi = findViewById(R.id.etContent);
+
+        //Set currentDate
+        mCurrentDate = dateFormat.format(c.getTime());
+    }
+
+    private void saveNote() {
+        //Get data from EditText
+        String title = etJudul.getText().toString();
+        String content = etIsi.getText().toString();
+
+        //Set dateCreated and dateModified value
+        dateCreated = mCurrentDate;
+        dateModified = dateCreated;
+
+        if (title.equals("") || content.equals("")) {
+            Toast.makeText(this, "Field masih kosong, tidak dapat menyimpan", Toast.LENGTH_SHORT).show();
+        } else {
+            //Initialize the database
+            DatabaseHelper db = new DatabaseHelper(this);
+
+            //Saving the data to object notes
+            Note note = new Note(title, content, dateCreated, dateModified);
+
+            //Call method for adding new notes
+            db.addNote(note);
+            db.close();
+
+            Intent intent = new Intent(PlainNoteEditor.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         }
 
-        private void saveNote(){
-            String dateCreated, dateModified;
-            String title = etJudul.getText().toString();
-            String content = etIsi.getText().toString();
-            dateCreated = mCurrentDate;
-            dateModified = dateCreated;
+    }
 
-            if(title.equals("") || content.equals("")){
-                showToast("Field masih kosong, tidak dapat menyimpan");
-            } else {
-                DatabaseHelper db = new DatabaseHelper(this);
-                Note note = new Note(title, content, dateCreated, dateModified);
-                db.addNote(note);
-                db.close();
-                Intent i = new Intent(PlainNoteEditor.this,MainActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add_notes, menu);
+        return true;
+    }
 
-            }
-
-        }
-
-        private void showToast(String msg){
-            Toast.makeText(this, msg ,Toast.LENGTH_SHORT);
-        }
-
-        @Override
-        public boolean onCreateOptionsMenu(Menu menu) {
-            getMenuInflater().inflate(R.menu.menu_add_notes,menu);
-            return true;
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if(id == R.id.action_save)
-                saveNote();
-            return super.onOptionsItemSelected(item);
-        }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_save)
+            saveNote();
+        return super.onOptionsItemSelected(item);
+    }
 }

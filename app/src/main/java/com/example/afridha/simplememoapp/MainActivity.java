@@ -4,18 +4,20 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import com.example.afridha.simplememoapp.Adapter.NoteListAdapter;
+import com.example.afridha.simplememoapp.Model.Note;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView rvNotes;
-    RecyclerView.Adapter adapter;
-    List<Note> notesList;
+    NoteListAdapter mAdapter;
+    List<Note> notesList = new ArrayList<>();
     FloatingActionButton tambahButton;
 
     @Override
@@ -23,52 +25,40 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        rvNotes = findViewById(R.id.RecyclerNotes);
+
         tambahButton = findViewById(R.id.fabTambahNotes);
 
-
-        initViews();
+        buildRecyclerView();
         loadNotes();
-            tambahButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    addNote();
-                }
-            });
-        }
 
-        private void initViews() {
-            rvNotes.setHasFixedSize(true);
-            LinearLayoutManager linearLayout = new LinearLayoutManager(getApplicationContext());
-            rvNotes.setLayoutManager(linearLayout);
-
-        }
-
-        private void loadNotes(){
-            DatabaseHelper db = new DatabaseHelper(this);
-            notesList = db.getAllNotes();
-            if(notesList.size() != 0){
-                notesList.clear();
-                notesList.addAll(db.getAllNotes());
-                adapter = new NoteListAdapter(this,notesList);
-                rvNotes.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+        tambahButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNote();
             }
-        }
+        });
+    }
 
-        public void addNote(){
-            Intent i = new Intent(MainActivity.this,PlainNoteEditor.class);
-            startActivity(i);
-        }
+    private void buildRecyclerView() {
+        rvNotes = findViewById(R.id.RecyclerNotes);
+        rvNotes.setHasFixedSize(true);
+        LinearLayoutManager linearLayout = new LinearLayoutManager(this);
+        rvNotes.setLayoutManager(linearLayout);
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 4) {
-            DatabaseHelper db = new DatabaseHelper(this);
-            notesList.clear();
-            notesList.addAll(db.getAllNotes());
-            adapter.notifyDataSetChanged();
+    }
+
+    private void loadNotes() {
+        DatabaseHelper db = new DatabaseHelper(this);
+        notesList = db.getAllNotes();
+        if (notesList.size() != 0) {
+            mAdapter = new NoteListAdapter(this, notesList);
+            rvNotes.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
         }
+    }
+
+    public void addNote() {
+        Intent i = new Intent(MainActivity.this, PlainNoteEditor.class);
+        startActivity(i);
     }
 }

@@ -1,4 +1,5 @@
 package com.example.afridha.simplememoapp;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -6,10 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.afridha.simplememoapp.Model.Note;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseHelper extends SQLiteOpenHelper{
+public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "SimpleNote.db";
     private static final int DATABASE_VERSION = 1;
     private static final String TAG = "DataHelper";
@@ -19,8 +22,8 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     private static final String CONTENT = "content";
     private static final String DATE_CREATED = "created";
     private static final String DATE_MODIFIED = "modified";
-    private static final String[] COL_ALL= new String[] {ID,TITLE,CONTENT, DATE_CREATED, DATE_MODIFIED};
-    
+    private static final String[] COL_ALL = new String[]{ID, TITLE, CONTENT, DATE_CREATED, DATE_MODIFIED};
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -28,21 +31,20 @@ public class DatabaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_TABLE_NOTES = "CREATE TABLE " + TABLE_NAME + " ( "
-                + ID + " INTEGER PRIMARY KEY AUTOINCREMENT"+", "
-                + TITLE + " TEXT NOT NULL"+ ", "
-                + CONTENT + " TEXT NOT NULL"+", "
-                + DATE_CREATED + " TEXT NOT NULL"+", "
+                + ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + ", "
+                + TITLE + " TEXT NOT NULL" + ", "
+                + CONTENT + " TEXT NOT NULL" + ", "
+                + DATE_CREATED + " TEXT NOT NULL" + ", "
                 + DATE_MODIFIED + " TEXT NOT NULL"
                 + ")";
-
-        Log.d(TAG,CREATE_TABLE_NOTES);
+        Log.d(TAG, CREATE_TABLE_NOTES);
         db.execSQL(CREATE_TABLE_NOTES);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String DROP_TABLE = "DROP TABLE IF EXISTS "+ TABLE_NAME;
-        Log.d(TAG,DROP_TABLE);
+        String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+        Log.d(TAG, DROP_TABLE);
         db.execSQL(DROP_TABLE);
         onCreate(db);
     }
@@ -54,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         values.put(CONTENT, note.getContent());
         values.put(DATE_CREATED, note.getDateCreated());
         values.put(DATE_MODIFIED, note.getDateModified());
-        db.insert(TABLE_NAME,null,values);
+        db.insert(TABLE_NAME, null, values);
         db.close();
     }
 
@@ -71,7 +73,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
                 note.setDateCreated(cursor.getString(3));
                 note.setDateModified(cursor.getString(4));
                 noteList.add(note);
-
             } while (cursor.moveToNext());
         }
         db.close();
@@ -90,6 +91,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         values.put(TITLE, note.getTitle());
         values.put(CONTENT, note.getContent());
         values.put(DATE_MODIFIED, note.getDateModified());
-        db.update(TABLE_NAME, values, ID+" =?",new String[]{String.valueOf(id)});
+        db.update(TABLE_NAME, values, ID + " =?", new String[]{String.valueOf(id)});
     }
 }
