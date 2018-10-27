@@ -10,13 +10,15 @@ import android.widget.Toast;
 
 import com.example.afridha.simplememoapp.Model.Note;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class PlainNoteEditor extends AppCompatActivity {
     EditText etJudul, etIsi;
-    Calendar c = Calendar.getInstance();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     String title, content, dateCreated, dateModified, mCurrentDate;
 
     @Override
@@ -28,7 +30,7 @@ public class PlainNoteEditor extends AppCompatActivity {
         etIsi = findViewById(R.id.etContent);
 
         //Set currentDate
-        mCurrentDate = dateFormat.format(c.getTime());
+        mCurrentDate = getDate();
     }
 
     private void saveNote() {
@@ -72,5 +74,19 @@ public class PlainNoteEditor extends AppCompatActivity {
         if (id == R.id.action_save)
             saveNote();
         return super.onOptionsItemSelected(item);
+    }
+
+    public String getDate() {
+        try {
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            String current = dateFormat.format(c.getTime());
+            Date date = dateFormat.parse(current);
+            SimpleDateFormat fmtOut = new SimpleDateFormat("d MMM yyyy");
+            return fmtOut.format(date);
+        } catch (ParseException e) {
+
+        }
+        return "";
     }
 }

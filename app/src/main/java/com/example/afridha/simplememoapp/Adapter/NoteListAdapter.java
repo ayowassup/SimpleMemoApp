@@ -27,7 +27,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NotesV
     public static class NotesViewHolder extends RecyclerView.ViewHolder {
         public TextView tvTitle, tvDate;
         public CardView cvNotes;
-        public ImageView delete, edit;
+        public ImageView delete;
 
         public NotesViewHolder(View itemView) {
             super(itemView);
@@ -35,7 +35,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NotesV
             tvDate = itemView.findViewById(R.id.tvNoteDate);
             delete = itemView.findViewById(R.id.deleteButton);
             cvNotes = itemView.findViewById(R.id.cardNote);
-            edit = itemView.findViewById(R.id.editButton);
+//            edit = itemView.findViewById(R.id.editButton);
         }
     }
 
@@ -58,7 +58,7 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NotesV
         final Note currentNote = mNoteList.get(position);
         holder.tvTitle.setText(currentNote.getTitle());
         holder.tvDate.setText(currentNote.getDateModified());
-        holder.edit.setOnClickListener(new View.OnClickListener() {
+        holder.cvNotes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, UpdateNoteEditor.class);
@@ -93,4 +93,5 @@ public class NoteListAdapter extends RecyclerView.Adapter<NoteListAdapter.NotesV
     public void refreshView(int position) {
         notifyItemChanged(position);
     }
+
 }

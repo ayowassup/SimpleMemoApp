@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     RecyclerView rvNotes;
-    NoteListAdapter mAdapter;
+    RecyclerView.Adapter mAdapter;
     List<Note> notesList = new ArrayList<>();
     FloatingActionButton tambahButton;
 
@@ -24,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         tambahButton = findViewById(R.id.fabTambahNotes);
 
@@ -43,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
         rvNotes = findViewById(R.id.RecyclerNotes);
         rvNotes.setHasFixedSize(true);
         LinearLayoutManager linearLayout = new LinearLayoutManager(this);
+        linearLayout.setReverseLayout(true);
+        linearLayout.setStackFromEnd(true);
+        rvNotes.addItemDecoration(new DividerItemDecoration(rvNotes.getContext(),
+               linearLayout.getOrientation()));
         rvNotes.setLayoutManager(linearLayout);
 
     }

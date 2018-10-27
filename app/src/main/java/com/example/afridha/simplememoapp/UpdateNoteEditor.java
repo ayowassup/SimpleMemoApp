@@ -9,13 +9,13 @@ import android.widget.EditText;
 
 import com.example.afridha.simplememoapp.Model.Note;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class UpdateNoteEditor extends AppCompatActivity {
     EditText etJudul, etIsi;
-    Calendar c = Calendar.getInstance();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
     String title, content, dateCreated, dateModified, mCurrentDate;
     int id;
 
@@ -28,7 +28,7 @@ public class UpdateNoteEditor extends AppCompatActivity {
         etIsi = findViewById(R.id.etContent);
 
         //Set currentDate
-        mCurrentDate = dateFormat.format(c.getTime());
+        mCurrentDate = getDate();
 
         //Get data from selected notes
         id = getIntent().getIntExtra("id", 0);
@@ -75,6 +75,21 @@ public class UpdateNoteEditor extends AppCompatActivity {
             updateNote();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public String getDate() {
+        try {
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            String current = dateFormat.format(c.getTime());
+            Date date = dateFormat.parse(current);
+            SimpleDateFormat fmtOut = new SimpleDateFormat("d MMM yyyy");
+            return fmtOut.format(date);
+        } catch (ParseException e) {
+
+        }
+
+        return "";
     }
 
 }
